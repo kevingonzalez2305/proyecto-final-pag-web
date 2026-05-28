@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBTIS No. 128 — Ciudad Juárez</title>
+
+<!-- =====================================================
+  FUENTES: Roboto (cuerpo) + Roboto Condensed (títulos)
+  Se cargan desde Google Fonts sin necesidad de archivos
+  locales. Roboto fue la petición del usuario.
+====================================================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================
+   VARIABLES DE COLOR
+   Extraídas de la paleta del sitio oficial:
+   - Guinda/vino  → color institucional principal
+   - Blanco       → texto sobre fondos oscuros
+   - Gris oscuro  → overlay sobre la foto del plantel
+   - Dorado       → acento igual que el logo jaguar amarillo
+   ========================================================== */
+:root {
+  --vino:        #7B1A34;   /* guinda institucional */
+  --vino-dark:   #5C1326;   /* guinda más oscuro para hover */
+  --vino-light:  #9E2244;   /* guinda más claro */
+  --gold:        #D4A017;   /* dorado del logo jaguar */
+  --gold-light:  #F0C040;   /* dorado claro para hover */
+  --blanco:      #FFFFFF;
+  --gris-texto:  #E8E0D8;   /* blanco roto para textos sobre foto */
+  --overlay:     rgba(10, 5, 8, 0.62); /* oscurece la foto hero */
+  --overlay-nav: rgba(10, 5, 8, 0.80); /* navbar más oscuro */
+  --card-bg:     rgba(15, 6, 11, 0.82);
+  --border:      rgba(212, 160, 23, 0.25); /* borde dorado tenue */
+  --font-main:   'Roboto', sans-serif;
+  --font-cond:   'Roboto Condensed', sans-serif;
+}
+
+/* ==========================================================
+   RESET BÁSICO
+   ========================================================== */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-main);
+  background: #0a0508;
+  color: var(--blanco);
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+img { display: block; max-width: 100%; }
+
+/* ==========================================================
+   LOADER
+   Pequeña animación de carga con el anillo guinda + dorado
+   ========================================================== */
+#loader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #0a0508;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1.5rem;
+  transition: opacity 0.7s ease, visibility 0.7s;
+}
+#loader.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader-ring {
+  width: 60px; height: 60px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--vino);
+  border-right-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+.loader-label {
+  font-family: var(--font-cond);
+  font-size: 0.9rem; font-weight: 700;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ==========================================================
+   FONDO GLOBAL DEL SITIO
+   La foto del plantel (imagen 2) se pone como fondo fijo
+   del <body> para que se vea debajo de todas las secciones.
+   El overlay oscurece la foto para que el texto sea legible.
+   La foto NO se repite y cubre siempre toda la pantalla.
+   ========================================================== */
+body::before {
+  content: '';
+  position: fixed; 
+  inset: 0; 
+  z-index: -2;
+  background-image: url('fondo.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: -1;
+  background: var(--overlay);
+}
+
+/* ==========================================================
+   MARCA DE AGUA DEL LOGO JAGUAR
+   El logo (imagen 1) aparece centrado en cada página como
+   marca de agua muy tenue (opacity muy baja) para dar
+   identidad sin distraer al contenido.
+   ========================================================== */
+.watermark {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px; height: 420px;
+  background-image: url('');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.04;     /* MUY tenue — solo se nota si buscas */
+  pointer-events: none;
+  z-index: 0;
+  filter: grayscale(1) brightness(3);
+}
+
+/* ==========================================================
+   NAVBAR SUPERIOR
+   Siempre visible encima de todo. Fondo semitransparente que
+   se vuelve más opaco al hacer scroll (con JS).
+   Links en MAYÚSCULAS, fuente condensada igual que el original.
+   ========================================================== */
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 500;
+  height: 64px;
+  background: var(--overlay-nav);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 2rem;
+  gap: 1.5rem;
+  transition: background 0.3s;
+}
+#navbar.scrolled {
+  background: rgba(10,5,8,0.95);
+}
+
+/* Logo en el navbar: icono jaguar pequeño + texto CBTIS 128 */
+.nav-logo {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-right: auto; flex-shrink: 0;
+}
+.nav-logo-img {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  /* Fondo blanco para que el logo circular se vea bien */
+  background: #fff;
+  padding: 2px;
+}
+.nav-logo-text {
+  font-family: var(--font-cond);
+  font-size: 1.3rem; font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--blanco);
+}
+.nav-logo-text span {
+  color: var(--gold);
+}
+
+/* Links del navbar */
+.nav-links {
+  display: flex; align-items: center; gap: 0.25rem;
+  list-style: none;
+}
+.nav-links li a,
+.nav-links li button {
+  padding: 0.5rem 0.85rem;
+  font-family: var(--font-cond);
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  border-radius: 3px;
+  transition: color 0.2s, background 0.2s;
+  display: block;
+}
+.nav-links li a:hover,
+.nav-links li button:hover,
+.nav-links li a.active,
+.nav-links li button.active {
+  color: var(--blanco);
+  background: rgba(255,255,255,0.08);
+}
+.nav-links li a.active { color: var(--gold); }
+
+/* Botón hamburguesa — solo visible en móvil */
+#hamburger {
+  display: none;
+  flex-direction: column; gap: 5px;
+  width: 38px; height: 38px;
+  align-items: center; justify-content: center;
+  border-radius: 4px;
+  margin-left: auto;
+}
+#hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--blanco); border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+/* ==========================================================
+   ESTRUCTURA PRINCIPAL
+   Cada "página" es un <section class="page"> oculto por
+   defecto. Sólo la que tiene class "active" se muestra.
+   Al cambiar de página, se aplica una animación fadeUp.
+   ========================================================== */
+#main {
+  padding-top: 64px; /* espacio para el navbar fijo */
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.page {
+  display: none;
+  animation: fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) both;
+  min-height: calc(100vh - 64px);
+}
+.page.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================
+   CONTENEDOR INTERIOR
+   Limita el ancho del contenido a 1180px y lo centra.
+   Todas las páginas usan .inner para el padding lateral.
+   ========================================================== */
+.inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ==========================================================
+   ENCABEZADO DE PÁGINA (compartido)
+   Bloque de eyebrow + título grande + subtítulo.
+   Se reutiliza en todas las páginas internas.
+   ========================================================== */
+.page-header {
+  padding: 4rem 2rem 2.5rem;
+  max-width: 1180px; margin: 0 auto;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 3rem;
+}
+.page-eyebrow {
+  display: inline-block;
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+.page-title {
+  font-family: var(--font-cond);
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 700; line-height: 1.05;
+  color: var(--blanco);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.page-lead {
+  font-size: 0.98rem; font-weight: 300;
+  color: var(--gris-texto); line-height: 1.8;
+  max-width: 560px; opacity: 0.85;
+}
+
+/* ==========================================================
+   BOTONES REUTILIZABLES
+   .btn-primary → guinda sólido (igual al ¡CONÓCENOS! del original)
+   .btn-outline  → borde blanco translúcido (igual al "OFERTA ACADÉMICA")
+   ========================================================== */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  background: var(--vino);
+  color: var(--blanco);
+  font-family: var(--font-cond);
+  font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  border: 2px solid var(--vino);
+  border-radius: 3px;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: var(--vino-dark);
+  border-color: var(--vino-dark);
+  transform: translateY(-2px);
+}
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  background: transparent;
+  color: var(--blanco);
+  font-family: var(--font-cond);
+  font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  border: 2px solid rgba(255,255,255,0.5);
+  border-radius: 3px;
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+.btn-outline:hover {
+  border-color: var(--blanco);
+  background: rgba(255,255,255,0.08);
+}
+
+/* ============================================================
+   ██████  PÁGINA: INICIO / HERO
+   ============================================================
+   Hero centrado sobre la foto del plantel (que ya es el fondo
+   del body). Se muestra el logo grande, lema, botones y stats.
+   ============================================================ */
+#page-inicio {
+  display: flex; flex-direction: column;
+  min-height: calc(100vh - 64px);
+}
+.hero-content {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 5rem 2rem 3rem;
+}
+/* Logo grande del jaguar en el hero */
+.hero-logo {
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  background: #fff;
+  padding: 6px;
+  margin-bottom: 1.5rem;
+  object-fit: contain;
+  /* Sombra guinda para que flote sobre la foto */
+  box-shadow: 0 0 0 4px var(--vino), 0 8px 32px rgba(0,0,0,0.6);
+}
+.hero-lema {
+  font-family: var(--font-cond);
+  font-size: clamp(1.4rem, 4vw, 2.4rem);
+  font-weight: 400; font-style: italic;
+  color: var(--blanco);
+  margin-bottom: 0.5rem;
+  /* Sombra de texto para legibilidad sobre la foto */
+  text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+}
+.hero-lema strong {
+  color: var(--gold);
+  font-weight: 700; font-style: normal;
+}
+.hero-title-big {
+  font-family: var(--font-cond);
+  font-size: clamp(3rem, 9vw, 7rem);
+  font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.04em; line-height: 0.9;
+  color: var(--blanco);
+  text-shadow: 0 4px 20px rgba(0,0,0,0.9);
+  margin-bottom: 0.4rem;
+}
+.hero-title-big span { color: var(--gold); }
+.hero-sub {
+  font-size: 0.95rem; font-weight: 300;
+  color: var(--gris-texto); line-height: 1.7;
+  max-width: 520px; margin: 1rem auto 2.5rem;
+  opacity: 0.9;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+}
+.hero-ctas {
+  display: flex; align-items: center; gap: 1rem;
+  justify-content: center; flex-wrap: wrap;
+}
+.hero-highlight {
+  max-width: 760px;
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(10, 5, 8, 0.72);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
+.hero-highlight .section-label {
+  margin-bottom: 0.35rem;
+  display: inline-block;
+}
+.hero-highlight p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--gris-texto);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+}
+.inicio-only {
+  margin: 0 auto 1rem;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+  width: auto;
+  max-width: none;
+}
+
+.inicio-only .section-label {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+}
+
+.noticias-carrusel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 0.1rem;
+}
+.noticias-header {
+  text-align: center;
+}
+.noticias-header h2 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-cond);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  color: var(--blanco);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.noticias-header p {
+  margin: 0 auto;
+  color: var(--gris-texto);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  max-width: 720px;
+}
+.facebook-feed-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.facebook-feed {
+  width: 100%;
+  max-width: 500px;
+  min-height: 560px;
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.noticia-card {
+  flex: 0 0 240px;
+  width: 240px;
+  max-width: 240px;
+  min-height: 290px;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.96);
+  color: #2b1a13;
+  border-radius: 12px;
+  padding: 0.6rem 0.7rem 1.1rem 0.7rem;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.noticia-card img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.noticia-card h3 {
+  font-family: var(--font-cond);
+  font-size: 0.98rem;
+  color: var(--vino-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0.2rem 0 0.1rem 0;
+}
+.noticia-card p {
+  color: #40352d;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.noticia-btn {
+  margin-top: auto;
+  align-self: flex-start;
+  border-radius: 999px;
+  padding: 0.32rem 0.7rem;
+  background: var(--vino);
+  color: var(--blanco);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.noticia-btn:hover { background: var(--gold); color: #2b1a13; }
+.noticias-arrow {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center; flex: 0 0 32px;
+  background: rgba(255,255,255,0.12); color: var(--blanco);
+  border: 1px solid rgba(255,255,255,0.18); font-size: 1.1rem;
+}
+.noticias-arrow:hover { background: rgba(212,160,23,0.18); }
+@media (max-width: 900px) {
+  .noticias-slider { gap: 0.2rem; }
+  .noticias-arrow { width: 28px; height: 28px; font-size: 1rem; }
+  .noticia-card { flex: 0 0 90vw; max-width: 95vw; }
+}
+@media (max-width: 640px) {
+  .noticias-slider { flex-direction: column; }
+  .noticias-strip { width: 100%; }
+  .noticias-arrow { display: none; }
+}
+/* Barra de estadísticas al fondo del hero */
+.hero-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--border);
+  background: rgba(10,5,8,0.75);
+  backdrop-filter: blur(8px);
+}
+.hstat {
+  padding: 1.5rem 2rem;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.hstat:last-child { border-right: none; }
+.hstat-num {
+  display: block;
+  font-family: var(--font-cond);
+  font-size: 2.5rem; font-weight: 700;
+  color: var(--gold); line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.hstat-label {
+  display: block;
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ============================================================
+   ██████  PÁGINA: NOSOTROS
+   ============================================================ */
+.nos-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.25rem; margin-bottom: 3rem;
+}
+.nos-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 2rem;
+  position: relative; overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.nos-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-3px);
+}
+/* Línea guinda arriba de la card que aparece en hover */
+.nos-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--vino), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.nos-card:hover::before { opacity: 1; }
+.nos-card-num {
+  display: block;
+  font-family: var(--font-cond);
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.75rem;
+}
+.nos-card h3 {
+  font-family: var(--font-cond);
+  font-size: 1.3rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--blanco); margin-bottom: 0.75rem;
+}
+.nos-card p {
+  font-size: 0.88rem; font-weight: 300;
+  color: var(--gris-texto); line-height: 1.8; opacity: 0.9;
+}
+
+/* Valores institucionales — chips */
+.values-section-title {
+  font-family: var(--font-cond);
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1rem; display: block;
+}
+.values-row {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem;
+}
+.value-chip {
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 1.5rem;
+  transition: border-color 0.3s;
+}
+.value-chip:hover { border-color: var(--vino); }
+.value-chip h4 {
+  font-family: var(--font-cond);
+  font-size: 1rem; font-weight: 700;
+  text-transform: uppercase; color: var(--blanco);
+  margin-bottom: 0.5rem;
+}
+.value-chip p {
+  font-size: 0.82rem; font-weight: 300;
+  color: var(--gris-texto); line-height: 1.7; opacity: 0.85;
+}
+
+/* ============================================================
+   ██████  PÁGINA: HISTORIA — Timeline
+   ============================================================ */
+.timeline {
+  position: relative; padding-left: 10px;
+  max-width: 800px;
+}
+/* Línea vertical guinda */
+.tl-rail {
+  position: absolute; left: 108px; top: 4px; bottom: 0; width: 2px;
+  background: linear-gradient(var(--vino) 0%, rgba(123,26,52,0) 100%);
+}
+.tl-item {
+  display: grid;
+  grid-template-columns: 90px 40px 1fr;
+  gap: 0 1.5rem;
+  margin-bottom: 3rem; align-items: start;
+}
+.tl-year {
+  font-family: var(--font-cond);
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.04em;
+  padding-top: 0.15rem; text-align: right;
+}
+.tl-dot {
+  display: flex; align-items: flex-start;
+  justify-content: center; padding-top: 0.35rem;
+}
+.tl-dot::after {
+  content: '';
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--vino);
+  box-shadow: 0 0 0 3px rgba(10,5,8,0.8), 0 0 0 5px rgba(123,26,52,0.35);
+}
+.tl-body h3 {
+  font-family: var(--font-cond);
+  font-size: 1.15rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--blanco); margin-bottom: 0.5rem;
+}
+.tl-body p {
+  font-size: 0.88rem; font-weight: 300;
+  color: var(--gris-texto); line-height: 1.8; opacity: 0.9;
+}
+
+/* ============================================================
+   ██████  PÁGINA: ESPECIALIDADES
+   ============================================================ */
+.esp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.25rem;
+}
+.esp-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+.esp-card:hover {
+  border-color: var(--vino);
+  transform: translateY(-4px);
+}
+.esp-card-top {
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.esp-num {
+  display: block;
+  font-family: var(--font-cond);
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.2em; color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+.esp-icon {
+  font-size: 2rem; margin-bottom: 0.75rem; display: block;
+  width: 50px; height: 50px;
+  background: rgba(123,26,52,0.25);
+  border: 1px solid rgba(123,26,52,0.4);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.esp-card h3 {
+  font-family: var(--font-cond);
+  font-size: 1.05rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--blanco); line-height: 1.25;
+}
+.esp-card-body {
+  padding: 1.25rem 2rem 2rem;
+}
+.esp-card-body p {
+  font-size: 0.84rem; font-weight: 300;
+  color: var(--gris-texto); line-height: 1.75; opacity: 0.9;
+}
+.esp-tag {
+  display: inline-block; margin-top: 0.85rem;
+  padding: 0.28rem 0.75rem;
+  background: rgba(123,26,52,0.25);
+  border: 1px solid rgba(123,26,52,0.4);
+  border-radius: 20px;
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ============================================================
+   ██████  PÁGINA: ACADÉMICO
+   ============================================================ */
+.academico-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.25rem; margin-bottom: 2.5rem;
+}
+.info-block {
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 2rem;
+}
+.info-block h3 {
+  font-family: var(--font-cond);
+  font-size: 1.1rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--blanco); margin-bottom: 1rem;
+}
+.info-block p {
+  font-size: 0.88rem; font-weight: 300;
+  color: var(--gris-texto); line-height: 1.8; opacity: 0.9;
+}
+.section-label {
+  display: block;
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1rem;
+}
+/* Tabla de semestres */
+.sem-wrap {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+  backdrop-filter: blur(6px);
+}
+.sem-table {
+  width: 100%; border-collapse: collapse; font-size: 0.78rem;
+  min-width: 700px;
+}
+.sem-table th {
+  background: var(--vino);
+  color: #fff; padding: 0.8rem 0.9rem; text-align: center;
+  font-family: var(--font-cond); font-weight: 700;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.sem-table td {
+  padding: 0.65rem 0.9rem; text-align: center;
+  border-bottom: 1px solid rgba(212,160,23,0.1);
+  color: var(--gris-texto); font-weight: 300;
+  background: rgba(10,5,8,0.7);
+  transition: background 0.2s;
+}
+.sem-table tr:hover td { background: rgba(123,26,52,0.15); }
+.sem-table tr.mod-row td {
+  background: rgba(123,26,52,0.2);
+  color: rgba(232,224,216,0.8); font-style: italic;
+}
+/* Cards de titulación */
+.tit-cards {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem;
+}
+.tit-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 1.75rem;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.tit-card:hover { border-color: var(--vino); transform: translateY(-3px); }
+.tit-icon {
+  font-size: 1.5rem; margin-bottom: 1rem;
+  width: 44px; height: 44px; border-radius: 8px;
+  background: rgba(123,26,52,0.25); border: 1px solid rgba(123,26,52,0.4);
+  display: flex; align-items: center; justify-content: center;
+}
+.tit-card h4 {
+  font-family: var(--font-cond);
+  font-size: 0.95rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--blanco); margin-bottom: 0.6rem;
+}
+.tit-card p {
+  font-size: 0.82rem; font-weight: 300;
+  color: var(--gris-texto); line-height: 1.7; opacity: 0.9;
+}
+
+/* ============================================================
+   ██████  PÁGINA: NOTICIAS
+   ============================================================ */
+.noticias-layout {
+  display: grid; grid-template-columns: 3fr 2fr;
+  gap: 1.5rem; margin-bottom: 2.5rem;
+}
+.noticia-featured {
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  transition: border-color 0.3s;
+}
+.noticia-featured:hover { border-color: var(--vino); }
+.noticia-img {
+  height: 200px;
+  background: linear-gradient(135deg, var(--vino-dark), var(--vino));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3.5rem; position: relative;
+}
+.noticia-date {
+  position: absolute; bottom: 1rem; left: 1.25rem;
+  background: rgba(0,0,0,0.65); backdrop-filter: blur(4px);
+  padding: 0.3rem 0.8rem; border-radius: 20px;
+  font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+  color: var(--gris-texto);
+}
+.noticia-body { padding: 1.5rem; }
+.noticia-body h3 {
+  font-family: var(--font-cond);
+  font-size: 1.2rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.03em;
+  color: var(--blanco); margin-bottom: 0.75rem; line-height: 1.3;
+}
+.noticia-body p {
+  font-size: 0.86rem; font-weight: 300;
+  color: var(--gris-texto); line-height: 1.75; opacity: 0.9;
+}
+.noticias-list {
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.noticia-row {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background 0.2s;
+}
+.noticia-row:last-child { border-bottom: none; }
+.noticia-row:hover { background: rgba(123,26,52,0.15); }
+.noticia-tag {
+  display: block;
+  font-family: var(--font-cond);
+  font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.4rem;
+}
+.noticia-row h4 {
+  font-size: 0.88rem; font-weight: 500;
+  color: var(--blanco); margin-bottom: 0.3rem; line-height: 1.4;
+}
+.noticia-row .n-date {
+  font-size: 0.72rem; font-weight: 300;
+  color: rgba(255,255,255,0.35);
+}
+/* Logros */
+.logros-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem;
+}
+.logro-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 1.5rem;
+  display: flex; align-items: flex-start; gap: 1rem;
+  transition: border-color 0.3s;
+}
+.logro-card:hover { border-color: var(--gold); }
+.logro-medal { font-size: 1.4rem; flex-shrink: 0; }
+.logro-card p {
+  font-size: 0.84rem; font-weight: 400;
+  color: var(--gris-texto); line-height: 1.6;
+}
+.logro-card small {
+  display: block; margin-top: 0.3rem;
+  font-size: 0.7rem; font-weight: 300;
+  color: rgba(255,255,255,0.3);
+}
+
+/* ============================================================
+   ██████  PÁGINA: GALERÍA
+   ============================================================ */
+.galeria-masonry {
+  columns: 3; gap: 1rem;
+}
+.gal-item {
+  break-inside: avoid; margin-bottom: 1rem;
+  border-radius: 8px; overflow: hidden;
+  border: 1px solid var(--border);
+  cursor: pointer; position: relative;
+  transition: border-color 0.3s;
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+}
+.gal-item:hover { border-color: var(--vino); }
+.gal-inner {
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.4s ease;
+}
+.gal-item:hover .gal-inner { transform: scale(1.04); }
+.gal-emoji { font-size: 2.5rem; padding: 3rem 2rem; display: block; }
+.gal-item:nth-child(2n) .gal-emoji { padding: 4rem 2rem; }
+.gal-caption {
+  position: absolute; inset: 0;
+  background: linear-gradient(transparent 40%, rgba(10,5,8,0.88));
+  display: flex; align-items: flex-end; padding: 1rem;
+  opacity: 0; transition: opacity 0.3s;
+}
+.gal-item:hover .gal-caption { opacity: 1; }
+.gal-caption span {
+  font-size: 0.8rem; font-weight: 500;
+  color: var(--blanco);
+}
+/* Variantes de color de fondo para cada item */
+.gc1 { background: rgba(13,21,32,0.9); }
+.gc2 { background: rgba(26,13,13,0.9); }
+.gc3 { background: rgba(13,24,13,0.9); }
+.gc4 { background: rgba(26,24,10,0.9); }
+.gc5 { background: rgba(24,13,24,0.9); }
+.gc6 { background: rgba(13,24,24,0.9); }
+.gc7 { background: rgba(26,13,13,0.9); }
+.gc8 { background: rgba(20,20,32,0.9); }
+
+/* ============================================================
+   ██████  PÁGINA: CONTACTO
+   ============================================================ */
+.contacto-layout {
+  display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem;
+}
+.contact-info h3 {
+  font-family: var(--font-cond);
+  font-size: 1.1rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--blanco); margin-bottom: 1.75rem;
+}
+.c-list { list-style: none; display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2rem; }
+.c-item { display: flex; gap: 1rem; align-items: flex-start; }
+.c-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  background: rgba(123,26,52,0.25);
+  border: 1px solid rgba(123,26,52,0.4);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+.c-item strong {
+  display: block; font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.3rem;
+}
+.c-item p, .c-item a {
+  font-size: 0.88rem; font-weight: 300;
+  color: var(--gris-texto); line-height: 1.5;
+}
+.c-item a:hover { color: var(--blanco); }
+.dir-title {
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.75rem; display: block;
+}
+.dir-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+.dir-tag {
+  font-size: 0.7rem; font-weight: 300;
+  color: rgba(255,255,255,0.45);
+  padding: 0.45rem 0.7rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 4px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.dir-tag:hover { border-color: rgba(123,26,52,0.5); color: var(--gris-texto); }
+/* Formulario */
+.contact-form-wrap {
+  background: var(--card-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 2.5rem;
+}
+.contact-form-wrap h3 {
+  font-family: var(--font-cond);
+  font-size: 1.1rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--blanco); margin-bottom: 1.75rem;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+.fg { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.1rem; }
+.fg.full { grid-column: span 2; }
+.fg label {
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+.fg input, .fg select, .fg textarea {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px; padding: 0.7rem 0.9rem;
+  font-family: var(--font-main); font-size: 0.88rem; font-weight: 300;
+  color: var(--blanco); outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  resize: none;
+}
+.fg input::placeholder, .fg textarea::placeholder { color: rgba(255,255,255,0.2); }
+.fg input:focus, .fg select:focus, .fg textarea:focus {
+  border-color: var(--vino); background: rgba(123,26,52,0.08);
+}
+.fg select { color: rgba(255,255,255,0.65); }
+.fg select option { background: #1a0810; }
+.fg textarea { height: 100px; }
+
+/* ============================================================
+   TOAST — Notificación breve tras enviar el formulario
+   ============================================================ */
+#toast {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 9000;
+  background: var(--vino); color: #fff;
+  padding: 0.85rem 1.5rem; border-radius: 4px;
+  font-size: 0.85rem; font-weight: 500;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+  background-color: #000000; /* Fondo totalmente negro */
+  color: #ffffff;
+  padding: 15px 20px; /* Tamaño del fondo del footer */
+  font-family: sans-serif;
+  font-size: 0.78rem; /* Tamaño de la letra general */
+}
+
+.footer-container {
+  max-width: 1050px; /* Ancho máximo para que no se desparrame */
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px; /* Separación entre las 4 columnas */
+  padding-bottom: 10px;
+}
+
+.footer-column h3 {
+  font-size: 0.85rem;
+  margin-top: 0;
+  margin-bottom: 8px; /* Espacio abajo del título */
+  border-bottom: 2px solid #ffffff;
+  padding-bottom: 3px;
+  display: inline-block;
+}
+
+.footer-column p {
+  line-height: 1.3; /* Interlineado para juntar las líneas de texto */
+  text-align: justify;
+  margin: 0 0 8px 0;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 4px; /* Espacio entre los enlaces de las listas */
+  line-height: 1.3;
+}
+
+.footer-column ul li a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.footer-column ul li a:hover {
+  text-decoration: underline;
+}
+
+.contact-info li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.social-icon {
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.15); 
+  padding-top: 10px;
+  text-align: center;
+  font-size: 0.72rem;
+}
+
+.footer-bottom a {
+  color: #bfa15f;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.footer-bottom a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .footer-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — Móvil
+   En pantallas < 960px el navbar colapsa a hamburguesa,
+   y los grids de 2 columnas pasan a 1.
+   ============================================================ */
+@media (max-width: 960px) {
+  #hamburger { display: flex; }
+  .nav-links {
+    position: fixed; top: 64px; left: 0; right: 0;
+    background: rgba(10,5,8,0.97);
+    flex-direction: column; align-items: stretch;
+    padding: 0.5rem 0;
+    display: none; border-bottom: 1px solid var(--border);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links li a, .nav-links li button {
+    padding: 1rem 1.5rem;
+    border-radius: 0; font-size: 0.9rem;
+  }
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .nos-grid, .academico-layout, .contacto-layout, .noticias-layout {
+    grid-template-columns: 1fr;
+  }
+  .values-row, .tit-cards, .logros-grid { grid-template-columns: 1fr 1fr; }
+  .galeria-masonry { columns: 2; }
+  .tl-item { grid-template-columns: 70px 30px 1fr; gap: 0 1rem; }
+  .tl-rail { left: 83px; }
+}
+@media (max-width: 540px) {
+  h1.hero-title-big { font-size: 3rem; }
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .values-row, .tit-cards, .logros-grid { grid-template-columns: 1fr; }
+  .galeria-masonry { columns: 1; }
+  .form-grid { grid-template-columns: 1fr; }
+  .fg.full { grid-column: span 1; }
+  .dir-list { grid-template-columns: 1fr; }
+  .hero-ctas { flex-direction: column; align-items: center; }
+}
+/*es para los botones para llevar a los archivos pdf*/
+.esp-card {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.esp-card:hover {
+  transform: scale(1.04);
+}
+
+.esp-card.active {
+  transform: scale(1.1);
+}
+
+.esp-btn-ver {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 16px;
+  background-color: #bfa15f;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.esp-card:hover .esp-btn-ver,
+.esp-card.active .esp-btn-ver {
+  opacity: 1;
+  transform: translateY(0);
+
+}
+/*es el css y la manera que se vea bien el link y donde se ve mi maps*/
+.contacto-maps-box {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.c-item {
+  display: flex;
+  gap: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.c-item:hover {
+  background-color: #4b0303;
+  transform: translateX(5px);
+}
+/*esta parte sirve para el mapa circular del semestre las imagenes y animaciones*/
+.css-carousel {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Ocultamos los botones radio de selección */
+.css-carousel input[type="radio"] {
+  display: none;
+}
+
+.slides-container {
+  display: flex;
+  width: 300%; /* Triple del ancho porque son 3 imágenes */
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  width: 33.333%;
+  display: flex;
+  justify-content: center;
+}
+
+.slide img {
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+}
+
+/* Lógica CSS para mover las imágenes según el botón seleccionado */
+#slide-1:checked ~ .slides-container { transform: translateX(0%); }
+#slide-2:checked ~ .slides-container { transform: translateX(-33.333%); }
+#slide-3:checked ~ .slides-container { transform: translateX(-66.666%); }
+
+/* Estilos de las flechas flotantes */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 50%;
+  z-index: 10;
+  user-select: none;
+}
+
+.arrow:hover { background-color: rgba(0, 0, 0, 0.8); }
+.prev { left: 10px; }
+.next { right: 10px; }
+
+/* Ocultamos todas las flechas por defecto */
+.nav-set {
+  display: none;
+}
+
+/* Solo mostramos las flechas que corresponden a la imagen activa */
+#slide-1:checked ~ .carousel-nav .set-1 { display: block; }
+#slide-2:checked ~ .carousel-nav .set-2 { display: block; }
+#slide-3:checked ~ .carousel-nav .set-3 { display: block; }
+/* Contenedor de las pestañas superiores */
+.tabs-carousel-nav {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+  font-family: sans-serif;
+}
+
+.tab-btn {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #000000;
+  cursor: pointer;
+  padding-bottom: 5px;
+  text-transform: uppercase;
+  transition: color 0.3s, border-bottom 0.3s;
+  border-bottom: 3px solid transparent;
+  user-select: none;
+}
+
+.tab-btn:hover {
+  color: #800020;
+}
+
+/* Lógica limpia para activar la pestaña correspondiente */
+#slide-1:checked ~ .tabs-carousel-nav .btn-obj {
+  color: #800020;
+  border-bottom: 3px solid #800020;
+}
+
+#slide-2:checked ~ .tabs-carousel-nav .btn-est {
+  color: #800020;
+  border-bottom: 3px solid #800020;
+}
+
+#slide-3:checked ~ .tabs-carousel-nav .btn-form {
+  color: #800020;
+  border-bottom: 3px solid #800020;
+}
+
+/* Truco CSS por si pusiste las pestañas fuera del contenedor del carousel */
+body:has(#slide-1:checked) .btn-obj { color: #800020; border-bottom: 3px solid #800020; }
+body:has(#slide-2:checked) .btn-est { color: #800020; border-bottom: 3px solid #800020; }
+body:has(#slide-3:checked) .btn-form { color: #800020; border-bottom: 3px solid #800020; }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-label">CBTIS 128</div>
+</div>
+
+<!-- MARCA DE AGUA del logo jaguar (fija en toda la pantalla) -->
+<div class="watermark" aria-hidden="true"></div>
+
+<!-- ============================================================
+   NAVBAR
+   Logo + links de navegación + hamburguesa para móvil
+   Cada link llama a navigate('id-de-pagina')
+   ============================================================ -->
+<nav id="navbar">
+  <div class="nav-logo" onclick="navigate('inicio')" style="cursor:pointer">
+    <img class="nav-logo-img" src="logo.jpg" alt="Logo Jaguares CBTIS 128">
+    <span class="nav-logo-text">CBTIS <span>128</span></span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="navigate('inicio')" data-page="inicio" class="active">Inicio</a></li>
+    <li><a href="#" onclick="navigate('nosotros')" data-page="nosotros">Nosotros</a></li>
+    <li><a href="#" onclick="navigate('historia')" data-page="historia">Historia</a></li>
+    <li><a href="#" onclick="navigate('especialidades')" data-page="especialidades">Especialidades</a></li>
+    <li><a href="#" onclick="navigate('academico')" data-page="academico">Académico</a></li>
+    <li><a href="#" onclick="navigate('noticias')" data-page="noticias">Noticias</a></li>
+    <li><a href="#" onclick="navigate('galeria')" data-page="galeria">Galería</a></li>
+    <li><a href="#" onclick="navigate('contacto')" data-page="contacto">Contacto</a></li>
+  </ul>
+
+  <button id="hamburger" onclick="toggleMenu()" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ============================================================
+   CONTENIDO PRINCIPAL
+   Cada <section class="page"> es una "pantalla" independiente.
+   Solo la que tenga class "active" se muestra.
+   La clase se maneja con JS en la función navigate().
+   ============================================================ -->
+<main id="main">
+
+  <!-- ██ INICIO ██ -->
+  <section class="page active" id="page-inicio">
+    <div class="hero-content">
+      <!-- Logo grande del jaguar — va en el centro del hero -->
+      <img class="hero-logo" src="logo.jpg">
+      <p class="hero-lema">"Alcancemos el mañana con <strong>nuestra propia tecnología</strong>"</p>
+
+      <h1 class="hero-title-big">CBTIS <span>128</span></h1>
+
+      <p class="hero-sub">
+        Centro de Bachillerato Tecnológico Industrial y de Servicios No. 128<br>
+        SEP · SEMS · DGETI — Ciudad Juárez, Chihuahua
+      </p>
+
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="navigate('nosotros')">¡Conócenos!</button>
+        <button class="btn-outline" onclick="navigate('especialidades')">Oferta académica</button>
+      </div>
+
+      <div class="hero-highlight">
+        <span class="section-label">Bienvenidos al plantel</span>
+        <p>Explora la historia, especialidades, actividades y logros que hacen de CBTIS 128 un lugar para crecer, aprender y construir tu futuro.</p>
+      </div>
+    </div>
+
+    <section class="page active inicio-only" id="page-inicio-extra">
+      <div class="noticias-carrusel">
+        <div class="noticias-header">
+          <span class="section-label">Noticias y logros</span>
+          <h2>Publicaciones de Facebook-Nuestras noticias mas recientes</h2>
+          <p>Se muestran las publicaciones mas recientes de la página oficial del CBTIS 128.</p>
+        </div>
+
+        <div class="facebook-feed-wrap">
+          <iframe
+            class="facebook-feed"
+            src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D100075762974946&tabs=timeline&width=500&height=560&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
+            scrolling="no"
+            frameborder="0"
+            allowfullscreen="true"
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            title="Publicaciones de Facebook del CBTIS 128">
+          </iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Barra de estadísticas al fondo del hero -->
+    <div class="hero-stats">
+      <div class="hstat">
+        <span class="hstat-num">1979</span>
+        <span class="hstat-label">Fundación</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">2,881</span>
+        <span class="hstat-label">Alumnos</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">7</span>
+        <span class="hstat-label">Especialidades</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">60</span>
+        <span class="hstat-label">Docentes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ██ NOSOTROS ██ -->
+  <section class="page" id="page-nosotros">
+    <div class="page-header">
+      <span class="page-eyebrow">Quiénes somos</span>
+      <h2 class="page-title">Nuestra Institución</h2>
+      <p class="page-lead">Una institución de excelencia al servicio de Chihuahua, formando bachilleres técnicos con visión de futuro desde 1979.</p>
+    </div>
+    <div class="inner" style="padding-bottom:4rem">
+      <div class="nos-grid">
+        <div class="nos-card">
+          <span class="nos-card-num">01 / Misión</span>
+          <h3>Misión</h3>
+          <p>Ser el medio fundamental para Adquirir, Transmitir y Acreditar la Cultura Tecnológica, formando Bachilleres Técnicos con alto Nivel Académico y Tecnológico, preparados para responder a las necesidades del Desarrollo Estatal y la Producción.</p>
+        </div>
+        <div class="nos-card">
+          <span class="nos-card-num">02 / Visión</span>
+          <h3>Visión</h3>
+          <p>Ser un Sistema Educativo de Excelencia, en los ámbitos Académicos, Tecnológicos y de Investigación, que satisfaga ampliamente los requerimientos de Recursos Humanos del Sector Productivo y de la Sociedad en el Estado de Chihuahua.</p>
+        </div>
+        <div class="nos-card">
+          <span class="nos-card-num">03 / Objetivo</span>
+          <h3>Objetivo de Calidad</h3>
+          <p>Satisfacer las necesidades y expectativas de la Sociedad en Educación Media Superior Tecnológica, a través de la formación de Bachilleres y Técnicos Profesionales que fortalezcan una Cultura Tecnológica e Infraestructura Industrial.</p>
+        </div>
+        <div class="nos-card">
+          <span class="nos-card-num">04 / Política</span>
+          <h3>Política de Calidad</h3>
+          <p>Formar y Desarrollar Integralmente a los Educandos del Sistema de Educación Tecnológica Industrial, fortaleciendo los valores que los motiven a la calidad, creatividad y la mejora continua en los procesos institucionales.</p>
+        </div>
+      </div>
+
+      <span class="values-section-title">Nuestros valores</span>
+      <div class="values-row">
+        <div class="value-chip">
+          <h4>Excelencia</h4>
+          <p>Compromiso con los más altos estándares académicos y tecnológicos en cada proceso educativo.</p>
+        </div>
+        <div class="value-chip">
+          <h4>Inclusión</h4>
+          <p>Atención igualitaria a todos los estudiantes, fomentando un ambiente de respeto y comunidad.</p>
+        </div>
+        <div class="value-chip">
+          <h4>Innovación</h4>
+          <p>Adopción constante de nuevas tecnologías y metodologías pedagógicas de vanguardia.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ██ HISTORIA ██ -->
+  <section class="page" id="page-historia">
+    <div class="page-header">
+      <span class="page-eyebrow">Nuestra trayectoria</span>
+      <h2 class="page-title">Más de 40 años</h2>
+      <p class="page-lead">Construyendo el futuro de Ciudad Juárez desde 1979, con décadas de logros académicos, tecnológicos, deportivos y culturales.</p>
+    </div>
+    <div class="inner" style="padding-bottom:4rem">
+      <div class="timeline">
+        <div class="tl-rail"></div>
+        <div class="tl-item">
+          <div class="tl-year">1971</div>
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <h3>Creación del DGETI</h3>
+            <p>El 16 de abril se publica en el Diario Oficial de la Federación el acuerdo presidencial que crea la Dirección General de Educación Tecnológica Industrial, adscrita a la SEMS de la SEP.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">1979</div>
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <h3>Nacimiento del CBTIS 128</h3>
+            <p>El 1 de septiembre nace el plantel bajo el nombre provisional de CECYT 432. Inicia actividades por las tardes en las instalaciones de la Secundaria Técnica No. 15, contando con 51 empleados y 480 alumnos en su primera generación.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">1980</div>
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <h3>Instalaciones propias en el Oasis</h3>
+            <p>El 15 de febrero la institución se traslada definitivamente a su terreno propio en Calle Nueva Zelanda y Mora No. 7870, Fraccionamiento Oasis. Inician las clases en aulas y talleres propios ofertando especialidades como Aire Acondicionado, Refrigeración, Electrónica, Administración, Gericultura y Alimentos.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">1998</div>
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <h3>Liderazgo Cívico y Tradición</h3>
+            <p>La Banda de Guerra y Escolta de Bandera oficial de los Jaguares comienzan a acumular de manera consecutiva los primeros lugares en competencias regionales, estatales y nacionales dentro del subsistema DGETI, marcando una era de disciplina y orgullo institucional.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2012</div>
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <h3>Excelencia en Prototipos</h3>
+            <p>El plantel se posiciona como un referente de innovación tecnológica. Alumnos y docentes del área de informática y electrónica destacan de forma consecutiva en el Encuentro Nacional de Prototipos de la DGETI, obteniendo acreditaciones para presentar proyectos a nivel internacional.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2015</div>
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <h3>Reconocimiento Internacional</h3>
+            <p>Consolidación de logros de alto nivel con la obtención del Premio IMJUVE, el primer lugar en el Concurso Nacional de la DGETI y una destacada participación internacional en el Festival de Palma de Mallorca, España.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2018</div>
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <h3>Poderío Deportivo e Infraestructura</h3>
+            <p>Los equipos deportivos dominan las ligas locales en disciplinas como fútbol americano, baloncesto y atletismo. A la par, el bachillerato moderniza sus laboratorios de Programación y talleres de Mecatrónica para responder a las altas demandas industriales de la frontera.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">Hoy</div>
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <h3>Liderazgo Absoluto en la Frontera</h3>
+            <p>Con una matrícula que supera los 3,000 alumnos distribuidos en dos turnos, el CBTIS 128 es una de las instituciones de educación media superior más grandes y con mayor demanda en el estado de Chihuahua, liderando de manera continua en certámenes de robótica y vinculación manufacturera.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ██ ESPECIALIDADES ██ -->
+  <section class="page" id="page-especialidades">
+  <div class="page-header">
+    <span class="page-eyebrow">Oferta técnica</span>
+    <h2 class="page-title">Especialidades</h2>
+    <p class="page-lead">7 carreras técnicas incluidas con el bachillerato. Al terminar obtienes certificado y título profesional registrado ante la SEP.</p>
+  </div>
+  <div class="inner" style="padding-bottom:4rem">
+    <div class="esp-grid">
+      <div class="esp-card" onclick="this.classList.toggle('active')">
+        <div class="esp-card-top">
+          <span class="esp-num">01</span>
+          <div class="esp-icon">💻</div>
+          <h3>Programación</h3>
+        </div>
+        <div class="esp-card-body">
+          <p>Analiza, diseña, desarrolla, instala y mantiene software de aplicación tomando como base los requerimientos del usuario.</p>
+          <span class="esp-tag">Tecnologías de la Información</span>
+          <a href="programacion.pdf" class="esp-btn-ver">Ver más</a>
+        </div>
+      </div>
+      <div class="esp-card" onclick="this.classList.toggle('active')">
+        <div class="esp-card-top">
+          <span class="esp-num">02</span>
+          <div class="esp-icon">🖥️</div>
+          <h3>Soporte de Equipo de Cómputo</h3>
+        </div>
+        <div class="esp-card-body">
+          <p>Realiza operaciones de soporte y mantenimiento a equipos de cómputo, instala redes LAN de acuerdo a las necesidades del cliente.</p>
+          <span class="esp-tag">Tecnologías de la Información</span>
+          <a href="soporte-computo.pdf" class="esp-btn-ver">Ver más</a>
+        </div>
+      </div>
+      <div class="esp-card" onclick="this.classList.toggle('active')">
+        <div class="esp-card-top">
+          <span class="esp-num">03</span>
+          <div class="esp-icon">⚡</div>
+          <h3>Electrónica</h3>
+        </div>
+        <div class="esp-card-body">
+          <p>Aplica dispositivos y sistemas electrónicos compactos y eficientes, presentes en todos los ámbitos de la vida del ser humano.</p>
+          <span class="esp-tag">Ingeniería y Tecnología</span>
+          <a href="electronica.pdf" class="esp-btn-ver">Ver más</a>
+        </div>
+      </div>
+      <div class="esp-card" onclick="this.classList.toggle('active')">
+        <div class="esp-card-top">
+          <span class="esp-num">04</span>
+          <div class="esp-icon">❄️</div>
+          <h3>Refrigeración y Climatización</h3>
+        </div>
+        <div class="esp-card-body">
+          <p>Instala, reconfigura, actualiza y mantiene sistemas de refrigeración, aire acondicionado y sistemas de enfriamiento industrial.</p>
+          <span class="esp-tag">Ingeniería y Tecnología</span>
+          <a href="refrigeracion.pdf" class="esp-btn-ver">Ver más</a>
+        </div>
+      </div>
+      <div class="esp-card" onclick="this.classList.toggle('active')">
+        <div class="esp-card-top">
+          <span class="esp-num">05</span>
+          <div class="esp-icon">👴</div>
+          <h3>Gericultura</h3>
+        </div>
+        <div class="esp-card-body">
+          <p>Adquiere conocimientos, habilidades y destrezas para ejercer profesionalmente en el ámbito de la atención integral al adulto mayor.</p>
+          <span class="esp-tag">Salud y Bienestar</span>
+          <a href="gericultura.pdf" class="esp-btn-ver">Ver más</a>
+        </div>
+      </div>
+      <div class="esp-card" onclick="this.classList.toggle('active')">
+        <div class="esp-card-top">
+          <span class="esp-num">06</span>
+          <div class="esp-icon">🧪</div>
+          <h3>Laboratorista Químico</h3>
+        </div>
+        <div class="esp-card-body">
+          <p>Asiste en las operaciones básicas de laboratorio ejecutando métodos de análisis cualitativos, cuantitativos, físico-químicos y microbiológicos.</p>
+          <span class="esp-tag">Laborotoristica Quimico</span>
+          <a href="laboratorista-quimico.pdf" class="esp-btn-ver">Ver más</a>
+        </div>
+      </div>
+      <div class="esp-card" onclick="this.classList.toggle('active')">
+        <div class="esp-card-top">
+          <span class="esp-num">07</span>
+          <div class="esp-icon">👥</div>
+          <h3>Administración de Recursos Humanos</h3>
+        </div>
+        <div class="esp-card-body">
+          <p>Elabora y gestiona documentación administrativa, integra al personal, asiste en actividades de capacitación y evaluación del personal.</p>
+          <span class="esp-tag">Administración y Negocios</span>
+          <a href="admin-rrhh.pdf" class="esp-btn-ver">Ver más</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- ██ ACADÉMICO ██ -->
+  <section class="page" id="page-academico">
+    <div class="page-header">
+      <span class="page-eyebrow">Plan de estudios</span>
+      <h2 class="page-title">Oferta Académica</h2>
+      <p class="page-lead">Bachillerato bivalente de 3 años. Obtienes el certificado de bachillerato y el título de Técnico Profesional registrado ante la SEP.</p>
+    </div>
+    <div class="inner" style="padding-bottom:4rem">
+      <div class="academico-layout">
+        <div class="info-block">
+          <h3>Modalidad bivalente</h3>
+          <p>Estudias el bachillerato al mismo tiempo que una carrera técnica. Al concluir los 3 años obtienes el certificado de bachillerato y una carta de pasante. Cubiertos los requisitos de titulación, obtienes el título y cédula profesional registrados ante la Dirección General de Profesiones de la SEP.</p>
+        </div>
+        <div class="info-block">
+          <h3>Estructura curricular</h3>
+          <p>Tres componentes: Formación Básica (materias de bachillerato), Formación Profesional (módulos técnicos según tu especialidad) y Formación Propedéutica (preparación para educación superior). Seis semestres con 12 a 17 hrs semanales de módulos técnicos.</p>
+        </div>
+      </div>
+
+          <span class="section-label"></span>
+            
+            <div class="sem-wrap">
+              <div class="css-carousel">
+                
+                <!-- Los inputs SIEMPRE deben ir arriba de todo para que controlen lo que sigue -->
+                <input type="radio" name="carousel-control" id="slide-1" checked>
+                <input type="radio" name="carousel-control" id="slide-2">
+                <input type="radio" name="carousel-control" id="slide-3">
+            
+                <!-- Pestañas superiores -->
+                <div class="tabs-carousel-nav">
+                  <label for="slide-1" class="tab-btn btn-obj">OBJETIVO</label>
+                  <label for="slide-2" class="tab-btn btn-est">ESTRUCTURA</label>
+                  <label for="slide-3" class="tab-btn btn-form">FORMACIÓN PROFESIONAL</label>
+                </div>
+            
+                <!-- Contenedor con todas las imágenes -->
+                <div class="slides-container">
+                  <div class="slide"><img src="plan.jpg"></div>
+                  <div class="slide"><img src="forma.jpg"></div>
+                  <div class="slide"><img src="proyecto.jpg"></div>
+                </div>
+            
+                <!-- Flechas para cambiar de lado -->
+                <div class="carousel-nav">
+                  <div class="nav-set set-1">
+                    <label for="slide-3" class="arrow prev">&#10094;</label>
+                    <label for="slide-2" class="arrow next">&#10095;</label>
+                  </div>
+                  <div class="nav-set set-2">
+                    <label for="slide-1" class="arrow prev">&#10094;</label>
+                    <label for="slide-3" class="arrow next">&#10095;</label>
+                  </div>
+                  <div class="nav-set set-3">
+                    <label for="slide-2" class="arrow prev">&#10094;</label>
+                    <label for="slide-1" class="arrow next">&#10095;</label>
+                  </div>
+                </div>
+            
+              </div>
+            </div>
+
+      <span class="section-label" style="margin-top:2.5rem; display:block">Opciones de titulación</span>
+      <div class="tit-cards">
+        <div class="tit-card">
+          <div class="tit-icon">📚</div>
+          <h4>Titulación Automática</h4>
+          <p>Al acreditar todas las asignaturas con calificaciones de 6 o superiores y tener los 5 módulos con dictamen de competente con promedio de 8.</p>
+        </div>
+        <div class="tit-card">
+          <div class="tit-icon">💼</div>
+          <h4>Experiencia Laboral</h4>
+          <p>Cuando demuestres mínimo un año de experiencia laboral a través de la memoria y constancia de la empresa donde te desempeñaste.</p>
+        </div>
+        <div class="tit-card">
+          <div class="tit-icon">🚀</div>
+          <h4>Diseño de Prototipos</h4>
+          <p>El alumno desarrolla un proyecto innovador con la memoria correspondiente, aplicando los conocimientos y competencias adquiridos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ██ NOTICIAS ██ -->
+  <section class="page" id="page-noticias">
+    <div class="page-header">
+      <span class="page-eyebrow">Noticias y avisos</span>
+      <h2 class="page-title">Últimas Novedades</h2>
+      <p class="page-lead">Entérate de los eventos, logros y avisos más recientes de la comunidad escolar.</p>
+    </div>
+    <div class="inner" style="padding-bottom:4rem">
+      <div class="noticias-layout">
+        <div class="noticia-featured">
+          <div class="noticia-img">
+            📢
+            <span class="noticia-date">Mayo 2025</span>
+          </div>
+          <div class="noticia-body">
+            <h3>Inicio de Inscripciones Ciclo Escolar 2025–2026</h3>
+            <p>El proceso de inscripción y reinscripción para el nuevo ciclo escolar está abierto. Consulta los requisitos en la oficina de Control Escolar o comunícate por nuestros canales oficiales.</p>
+          </div>
+        </div>
+        <div class="noticias-list">
+          <div class="noticia-row"><span class="noticia-tag">Evento</span><h4>Olimpiada del Conocimiento Interestatal 2025</h4><div class="n-date">Abril 28, 2025</div></div>
+          <div class="noticia-row"><span class="noticia-tag">Aviso</span><h4>Entrega de Credenciales — Alumnos Nuevo Ingreso</h4><div class="n-date">Abril 15, 2025</div></div>
+          <div class="noticia-row"><span class="noticia-tag">Logro</span><h4>Alumnos ganan 1er lugar en Expo-Ciencias Regional</h4><div class="n-date">Marzo 30, 2025</div></div>
+          <div class="noticia-row"><span class="noticia-tag">Aviso</span><h4>Semana de Exámenes Parciales — Ajuste de Horarios</h4><div class="n-date">Marzo 10, 2025</div></div>
+        </div>
+      </div>
+
+      <span class="section-label">Logros destacados</span>
+      <div class="logros-grid">
+        <div class="logro-card"><span class="logro-medal">🥇</span><div><p>1er Lugar Nacional FEMEXBAM en competencia de educación media superior.</p><small>Atletismo</small></div></div>
+        <div class="logro-card"><span class="logro-medal">🎺</span><div><p>Banda de Guerra — más de 50 primeros lugares en competencias.</p><small>Cultura y Artes</small></div></div>
+        <div class="logro-card"><span class="logro-medal">🌍</span><div><p>Participación en el Festival Internacional de Palma de Mallorca, España.</p><small>Internacional</small></div></div>
+        <div class="logro-card"><span class="logro-medal">💡</span><div><p>1er Lugar en Concurso Nacional de Prototipos DGETI.</p><small>Ciencia y Tecnología</small></div></div>
+        <div class="logro-card"><span class="logro-medal">🔬</span><div><p>1er Lugar Expo-Ciencias DGETI a nivel estatal y regional.</p><small>Ciencias</small></div></div>
+        <div class="logro-card"><span class="logro-medal">🏅</span><div><p>Premio IMJUVE 2015 al mérito juvenil en actividades de impacto social.</p><small>Reconocimiento Nacional</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ██ GALERÍA ██ -->
+  <section class="page" id="page-galeria">
+    <div class="page-header">
+      <span class="page-eyebrow">Vida escolar</span>
+      <h2 class="page-title">Galería</h2>
+      <p class="page-lead">Momentos que hacen especial a nuestra comunidad. Deportes, cultura, ciencia y convivencia.</p>
+    </div>
+    <div class="inner" style="padding-bottom:4rem">
+      <!-- NOTA PARA EL DESARROLLADOR:
+           Reemplaza cada .gal-emoji por una etiqueta <img src="ruta/foto.jpg">
+           dentro de .gal-inner. La estructura del hover y caption ya funciona. -->
+      <div class="galeria-masonry">
+        <div class="gal-item"><div class="gal-inner gc1"><span class="gal-emoji">🏫</span></div><div class="gal-caption"><span>Instalaciones del plantel</span></div></div>
+        <div class="gal-item"><div class="gal-inner gc2"><span class="gal-emoji">🎓</span></div><div class="gal-caption"><span>Ceremonia de graduación</span></div></div>
+        <div class="gal-item"><div class="gal-inner gc3"><span class="gal-emoji">🎺</span></div><div class="gal-caption"><span>Banda de Guerra</span></div></div>
+        <div class="gal-item"><div class="gal-inner gc4"><span class="gal-emoji">⚽</span></div><div class="gal-caption"><span>Torneos deportivos</span></div></div>
+        <div class="gal-item"><div class="gal-inner gc5"><span class="gal-emoji">🔬</span></div><div class="gal-caption"><span>Laboratorios de ciencias</span></div></div>
+        <div class="gal-item"><div class="gal-inner gc6"><span class="gal-emoji">💻</span></div><div class="gal-caption"><span>Centro de cómputo</span></div></div>
+        <div class="gal-item"><div class="gal-inner gc7"><span class="gal-emoji">🏆</span></div><div class="gal-caption"><span>Logros y reconocimientos</span></div></div>
+        <div class="gal-item"><div class="gal-inner gc8"><span class="gal-emoji">🎭</span></div><div class="gal-caption"><span>Actividades culturales</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ██ CONTACTO ██ -->
+  <section class="page" id="page-contacto">
+    <div class="page-header">
+      <span class="page-eyebrow">Encuéntranos</span>
+      <h2 class="page-title">Contacto</h2>
+      <p class="page-lead">Estamos para atenderte. Escríbenos, llámanos o visítanos en nuestras instalaciones de Fracc. Oasis.</p>
+    </div>
+    <div class="inner" style="padding-bottom:4rem">
+      <div class="contacto-layout">
+        <div class="contact-info">
+          <h3>Información general</h3>
+          <ul class="c-list">
+            <li class="c-item">
+              <div class="c-icon">📍</div>
+              <div style="width: 100%;">
+                <a href="https://www.google.com/maps/search/?api=1&query=CBTIS+128+Ciudad+Juarez" target="_blank" style="text-decoration: none; color: inherit; display: block;">
+                  <div style="margin-bottom: 15px; cursor: pointer;">
+                    <strong>Dirección</strong>
+                    <p style="margin: 5px 0 0 0;">Calle Nueva Zelanda No. 7870<br>Fracc. Oasis, Cd. Juárez, Chih.</p>
+                  </div>
+                </a>
+            
+                <iframe 
+                  src="https://maps.google.com/maps?q=CBTIS%20128%20Ciudad%20Juarez&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                  width="100%" 
+                  height="250" 
+                  style="border:0; border-radius: 8px; display: block;" 
+                  allowfullscreen="" 
+                  loading="lazy" 
+                  referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
+            </li>
+            <li class="c-item">
+              <div class="c-icon">📞</div>
+              <div><strong>Teléfonos</strong><p><a href="tel:6566191934">656-619-1934</a> / <a href="tel:6566191570">656-619-1570</a></p></div>
+            </li>
+            <li class="c-item">
+              <div class="c-icon">✉️</div>
+              <div><strong>Correo</strong><p><a href="direccion@cbtis128.edu.mx">direccion@cbtis128.edu.mx</a></p></div>
+            </li>
+            <li class="c-item">
+              <div class="c-icon">🕐</div>
+              <div><strong>Horario</strong><p>Lunes a Viernes: 7:00 AM – 3:00 PM</p></div>
+            </li>
+          </ul>
+          <span class="dir-title">Directorio de correos</span>
+          <div class="dir-list">
+            <div class="dir-tag">direccion@cbtis128.edu.mx</div>
+            <div class="dir-tag">subdireccion@cbtis128.edu.mx</div>
+            <div class="dir-tag">controlescotar@cbtis128.edu.mx</div>
+            <div class="dir-tag">practicasprofesionales@cbtis128.edu.mx</div>
+            <div class="dir-tag">titulacion@cbtis128.edu.mx</div>
+            <div class="dir-tag">serviciosocial@cbtis128.edu.mx</div>
+            <div class="dir-tag">becas@cbtis128.edu.mx</div>
+            <div class="dir-tag">tutorias@cbtis128.edu.mx</div>
+            <div class="dir-tag">orientacion.tm@cbtis128.edu.mx</div>
+            <div class="dir-tag">biblioteca@cbtis128.edu.mx</div>
+          </div>
+        </div>
+
+        <div class="contact-form-wrap">
+          <h3>Envíanos un mensaje</h3>
+          <div class="form-grid">
+            <div class="fg"><label>Nombre</label><input type="text" id="fn" placeholder="Tu nombre completo"></div>
+            <div class="fg"><label>Teléfono</label><input type="tel" id="ftel" placeholder="Tu número"></div>
+            <div class="fg full"><label>Correo electrónico</label><input type="email" id="fe" placeholder="correo@ejemplo.com"></div>
+            <div class="fg full">
+              <label>Asunto</label>
+              <select id="fas">
+                <option>Información de inscripciones</option>
+                <option>Oferta educativa</option>
+                <option>Servicios escolares</option>
+                <option>Becas y apoyos</option>
+                <option>Otro</option>
+              </select>
+            </div>
+            <div class="fg full"><label>Mensaje</label><textarea id="fmsg" placeholder="Escribe tu mensaje aquí..."></textarea></div>
+            <div class="fg full">
+              <button class="btn-primary" style="width:100%; justify-content:center" onclick="handleContact()">
+                Enviar mensaje
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-container">
+    
+    <div class="footer-column">
+      <h3>Sobre nosotros</h3>
+      <p>Nuestro compromiso es seguir trabajando con el apoyo de toda la comunidad que integra el CBTIS 128 para lograr formar técnicos profesionales capaces de destacar en el ámbito laboral. Desde hace más de 50 años hemos brindado las herramientas para que nuestros estudiantes logren sobresalir en la industria y sus vidas profesionales. Estamos comprometidos con la sociedad juarense y creemos firmemente en la educación y los valores que hemos impartido en cada uno de nuestros ingresados.</p>
+      <div class="footer-socials">
+        <a href="#" target="_blank" class="social-icon">📘</a>
+        <a href="#" target="_blank" class="social-icon">▶️</a>
+      </div>
+    </div>
+
+    <div class="footer-column">
+      <h3>Avisos de Privacidad</h3>
+      <ul>
+        <li><a href="#">Aviso de Privacidad Integral Planteles</a></li>
+        <li><a href="#">Aviso de Privacidad Simplificado Planteles</a></li>
+        <li><a href="#">Política pública para la educación media superior</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Información de Contacto</h3>
+      <ul class="contact-info">
+        <li><span>📍</span> CBTIS 128, Nueva Zelanda, Oasis</li>
+        <li><span>📞</span> 656-619-1934<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;656-619-1570</li>
+        <li><span>✉️</span> informacion@cbtis128.edu.mx</li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Agradecimientos</h3>
+      <ul>
+       <li></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>
+      © 2026 CBTIS No. 128 — Todos los derechos reservados &nbsp;|&nbsp;
+      Ciudad Juárez, Chihuahua, México &nbsp;|&nbsp;
+      <a href="https://www.dgeti.sep.gob.mx" target="_blank">DGETI</a> ·
+      <a href="https://www.sems.gob.mx" target="_blank">SEMS</a> ·
+      <a href="https://www.gob.mx/sep" target="_blank">SEP</a>
+    </p>
+  </div>
+</footer>
+
+<!-- TOAST (notificación de formulario) -->
+<div id="toast"></div>
+
+<!-- ============================================================
+   JAVASCRIPT
+   ============================================================ -->
+<script>
+// ----------------------------------------------------------
+// LOADER
+// Cuando la página termina de cargar, ocultamos el loader.
+// El timeout de 1400ms da tiempo a que las fuentes carguen.
+// ----------------------------------------------------------
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('gone'), 1400);
+});
+
+// ----------------------------------------------------------
+// NAVIGATE(pageId)
+// Función central de la SPA. Al llamarla:
+//   1. Oculta todas las .page
+//   2. Muestra la página con id "page-<pageId>"
+//   3. Actualiza el link activo del navbar
+//   4. Hace scroll al top
+//   5. Cierra el menú móvil si estaba abierto
+// ----------------------------------------------------------
+function navigate(pageId) {
+  // Quitar "active" de todas las páginas
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+  // Activar la página pedida
+  const target = document.getElementById('page-' + pageId);
+  if (target) target.classList.add('active');
+
+  // Mantener la sección extra de Inicio visible solo cuando se está en Inicio
+  const extraInicio = document.getElementById('page-inicio-extra');
+  if (pageId === 'inicio') {
+    if (extraInicio) extraInicio.classList.add('active');
+  } else if (extraInicio) {
+    extraInicio.classList.remove('active');
+  }
+
+  // Actualizar link activo en el navbar
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === pageId);
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  closeMobileMenu();
+  return false; // evitar que el href="#" haga scroll
+}
+
+// ----------------------------------------------------------
+// NAVBAR — cambiar opacidad al hacer scroll
+// ----------------------------------------------------------
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ----------------------------------------------------------
+// MENÚ MÓVIL — hamburguesa
+// ----------------------------------------------------------
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+function closeMobileMenu() {
+  document.getElementById('navLinks').classList.remove('open');
+}
+
+// ----------------------------------------------------------
+// CARRUSEL DE NOTICIAS EN INICIO
+// ----------------------------------------------------------
+
+// ----------------------------------------------------------
+// TOAST — notificación temporal
+// ----------------------------------------------------------
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ----------------------------------------------------------
+// FORMULARIO DE CONTACTO
+// Validación básica antes de mostrar el mensaje de éxito.
+// En producción aquí iría un fetch() a tu backend.
+// ----------------------------------------------------------
+function handleContact() {
+  const nombre = document.getElementById('fn').value.trim();
+  const email  = document.getElementById('fe').value.trim();
+  const msg    = document.getElementById('fmsg').value.trim();
+
+  if (!nombre || !email || !msg) {
+    showToast('⚠️ Por favor completa todos los campos');
+    return;
+  }
+  // Limpiar campos
+  ['fn','ftel','fe','fmsg'].forEach(id => document.getElementById(id).value = '');
+  showToast('✓ Mensaje enviado correctamente');
+}
+
+// ----------------------------------------------------------
+// REVEAL ANIMADO al hacer scroll
+// Todos los elementos con clase .nos-card, .esp-card, etc.
+// arrancan invisibles y aparecen con animación cuando entran
+// al viewport. El delay escalonado (i * 0.05s) los hace
+// aparecer uno por uno en lugar de todos al mismo tiempo.
+// ----------------------------------------------------------
+const revealTargets = document.querySelectorAll(
+  '.nos-card, .value-chip, .esp-card, .tit-card, .logro-card, .gal-item, .tl-item, .info-block'
+);
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+      observer.unobserve(e.target); // solo se anima una vez
+    }
+  });
+}, { threshold: 0.08 });
+
+revealTargets.forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  // Transición con delay escalonado según posición en el DOM
+  el.style.transition = `opacity 0.55s ease ${i * 0.05}s, transform 0.55s ease ${i * 0.05}s`;
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
