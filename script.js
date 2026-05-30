@@ -75,36 +75,6 @@ function handleContact() {
   showToast('✓ Mensaje enviado correctamente');
 }
 
-/* ── COUNTER-UP animado en stats ── */
-function animateCounters() {
-  const stats = document.querySelectorAll('.hstat-num');
-  stats.forEach(el => {
-    if (el.dataset.animated) return;
-
-    // Guardar el valor original en dataset para no perderlo en cada tick
-    const target = parseInt(el.dataset.target || el.textContent.trim(), 10);
-    if (!target) return;
-
-    el.dataset.target   = target;
-    el.dataset.animated = 'true';
-
-    const duration = 1200;
-    const step     = 16;
-    const steps    = duration / step;
-    let current    = 0;
-
-    const timer = setInterval(() => {
-      current += target / steps;
-      if (current >= target) {
-        el.textContent = target.toLocaleString('es-MX');
-        clearInterval(timer);
-      } else {
-        el.textContent = Math.floor(current).toLocaleString('es-MX');
-      }
-    }, step);
-  });
-}
-
 /* ── Años dinámicos ── */
 (function updateYears() {
   const founded = 1979;
@@ -135,18 +105,6 @@ revealTargets.forEach((el, i) => {
   el.style.transition = `opacity 0.55s ease ${i * 0.05}s, transform 0.55s ease ${i * 0.05}s`;
   revealObserver.observe(el);
 });
-
-/* ── Observer para counter-up (solo cuando la barra de stats es visible) ── */
-const statsBar = document.querySelector('.hero-stats');
-if (statsBar) {
-  const statsObserver = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      animateCounters();
-      statsObserver.disconnect();
-    }
-  }, { threshold: 0.5 });
-  statsObserver.observe(statsBar);
-}
 
 /* ── EVENTOS de navegación declarativa (elimina onclick inline) ── */
 document.addEventListener('DOMContentLoaded', () => {
