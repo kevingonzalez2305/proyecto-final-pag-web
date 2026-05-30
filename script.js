@@ -79,11 +79,15 @@ function handleContact() {
 function animateCounters() {
   const stats = document.querySelectorAll('.hstat-num');
   stats.forEach(el => {
-    const raw     = el.textContent.replace(/[^0-9]/g, '');
-    const target  = parseInt(raw, 10);
-    if (!target || el.dataset.animated) return;
+    if (el.dataset.animated) return;
 
+    // Guardar el valor original en dataset para no perderlo en cada tick
+    const target = parseInt(el.dataset.target || el.textContent.trim(), 10);
+    if (!target) return;
+
+    el.dataset.target   = target;
     el.dataset.animated = 'true';
+
     const duration = 1200;
     const step     = 16;
     const steps    = duration / step;
@@ -92,10 +96,10 @@ function animateCounters() {
     const timer = setInterval(() => {
       current += target / steps;
       if (current >= target) {
-        el.textContent = el.textContent.replace(raw, target.toLocaleString('es-MX'));
+        el.textContent = target.toLocaleString('es-MX');
         clearInterval(timer);
       } else {
-        el.textContent = el.textContent.replace(raw, Math.floor(current).toLocaleString('es-MX'));
+        el.textContent = Math.floor(current).toLocaleString('es-MX');
       }
     }, step);
   });
