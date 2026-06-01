@@ -1,8 +1,6 @@
-/* ==============================================
-   script.js — CBTIS 128
-   ============================================== */
+/* Script principal de la pagina, por lo que veo hay algunas animaciones que se hacen directamente en CSS, hay que evitar confusiones y hacerlas todas en un documento. */
 
-/* ── LOADER ── */
+/* Pantalla de carga, utiliza constantes por lo que veo, esta bien. */
 window.addEventListener('load', () => {
   const loader = document.getElementById('loader');
   const start  = Date.now();
@@ -11,16 +9,16 @@ window.addEventListener('load', () => {
   elapsed >= 400 ? hide() : setTimeout(hide, 400 - elapsed);
 });
 
-/* ── NAVBAR scroll ── */
+/* Scroll por la barra de navegacion, puede hacerse mas sencilla, pero esta bien.  */
 window.addEventListener('scroll', () => {
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
 });
 
-/* ── MENÚ MÓVIL ── */
+/* Este es un despliegue del menu. */
 function toggleMenu()    { document.getElementById('navLinks').classList.toggle('open'); }
 function closeMobileMenu() { document.getElementById('navLinks').classList.remove('open'); }
 
-/* ── Cerrar menú al hacer click fuera ── */
+/* Cerrar menú al hacer click fuera, usa eventos. */
 document.addEventListener('click', (e) => {
   const nav  = document.getElementById('navLinks');
   const btn  = document.getElementById('hamburger');
@@ -29,7 +27,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-/* ── TOAST ── */
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -37,30 +35,30 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3500);
 }
 
-/* ── FORMULARIO DE CONTACTO ── */
+/* Borrale los emojis y los comentarios del geminai por lo menozz*/
 function handleContact() {
   const nombre = document.getElementById('fn').value.trim();
   const email  = document.getElementById('fe').value.trim();
   const msg    = document.getElementById('fmsg').value.trim();
 
   if (!nombre || !email || !msg) {
-    showToast('⚠️ Por favor completa todos los campos');
+    showToast(' Por favor completa todos los campos');
     return;
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    showToast('⚠️ Ingresa un correo electrónico válido');
+    showToast(' Ingresa un correo electrónico válido');
     return;
   }
 
   ['fn', 'ftel', 'fe', 'fmsg'].forEach(id => {
     document.getElementById(id).value = '';
   });
-  showToast('✓ Mensaje enviado correctamente');
+  showToast(' Mensaje enviado correctamente');
 }
 
-/* ── Años dinámicos ── */
+
 (function updateYears() {
   const founded = 1979;
   const years   = new Date().getFullYear() - founded;
@@ -69,7 +67,7 @@ function handleContact() {
   });
 })();
 
-/* ── REVEAL animado con IntersectionObserver ── */
+
 const revealTargets = document.querySelectorAll(
   '.nos-card, .value-chip, .esp-card, .tit-card, .logro-card, .gal-item, .tl-item, .info-block'
 );
