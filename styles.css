@@ -612,3 +612,69 @@ body:has(#slide-3:checked) .btn-form { color: #bfa15f; border-bottom: 3px solid 
   body { background: #fff; color: #000; }
   #main { padding-top: 0; }
 }
+/* Contenedor principal: alinea el texto y la imagen en paralelo */
+.mensaje__contenedor {
+  display: flex;
+  gap: 30px; 
+  align-items: center; 
+  max-width: 1200px; 
+  margin: 0 auto; 
+  padding: 20px;
+}
+
+/* Sección de texto: aquí activamos el scroll */
+.mensaje__texto {
+  flex: 1; 
+  max-height: 450px; 
+  overflow-y: auto; 
+  padding-right: 15px; 
+}
+
+
+.mensaje__imagen {
+  flex: 1; 
+  display: flex;
+  justify-content: center;
+}
+
+
+.mensaje__img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px; 
+  object-fit: cover;
+}
+
+
+.apartados__titulo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.mensaje__parrafo {
+  margin-bottom: 15px;
+  line-height: 1.6; /* Mejora la lectura */
+  text-align: justify; /* Alineación justificada */
+}
+
+.mensaje__centrado {
+  text-align: center;
+}
+
+.mensaje__negrita {
+  font-weight: bold;
+}
+
+
+
+@media (max-width: 768px) {
+  .mensaje__contenedor {
+      flex-direction: column-reverse; 
+  }
+  
+  .mensaje__texto {
+      max-height: none; 
+      overflow-y: visible;
+      padding-right: 0;
+  }
+}
