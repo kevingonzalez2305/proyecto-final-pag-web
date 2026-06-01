@@ -35,7 +35,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3500);
 }
 
-/* Borrale los emojis y los comentarios del geminai por lo menozz*/
+
 function handleContact() {
   const nombre = document.getElementById('fn').value.trim();
   const email  = document.getElementById('fe').value.trim();
