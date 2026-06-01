@@ -1,6 +1,4 @@
-/* ══════════════════════════════════════
-   VARIABLES Y RESET
-══════════════════════════════════════ */
+/* Si ya tienes las fuentes y el estilo definido aqui, ya no hay que llamarlas en cada HTML, mejorar CSS */
 :root {
   --vino:        #7B1A34;
   --vino-dark:   #5C1326;
@@ -29,9 +27,7 @@ a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
 img { display: block; max-width: 100%; }
 
-/* ══════════════════════════════════════
-   LOADER
-══════════════════════════════════════ */
+/*Loader de la pagina, quiza puede consumir menos recursos si es optimizado. */
 #loader {
   position: fixed; inset: 0; z-index: 9999;
   background: #0a0508;
@@ -56,9 +52,7 @@ img { display: block; max-width: 100%; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ══════════════════════════════════════
-   FONDO GLOBAL
-══════════════════════════════════════ */
+/* Intentar cambiarlo por un fondo simple, asi no se satura la pagina, se consumen menos recursos y tenemos una mejor UI/UX */
 body::before {
   content: '';
   position: fixed; inset: 0; z-index: -2;
@@ -87,9 +81,7 @@ body::after {
   filter: grayscale(1) brightness(3);
 }
 
-/* ══════════════════════════════════════
-   NAVBAR
-══════════════════════════════════════ */
+/* La barra de navegacion esta bien, sencilla, facil de usar. */
 #navbar {
   position: fixed; top: 0; left: 0; right: 0;
   z-index: 500;
@@ -161,9 +153,7 @@ body::after {
   transition: transform 0.3s, opacity 0.3s;
 }
 
-/* ══════════════════════════════════════
-   LAYOUT PRINCIPAL
-══════════════════════════════════════ */
+/* Supongo que este es el estilo de la pagina principal, esta bien.*/
 #main {
   padding-top: 64px;
   min-height: 100vh;
@@ -217,9 +207,7 @@ body::after {
   max-width: 560px; opacity: 0.85;
 }
 
-/* ══════════════════════════════════════
-   BOTONES
-══════════════════════════════════════ */
+/* Estilo de los botones, mas que hacer una buena interfaz yo recomiendo que mejoremos la experiencia del usuario en la pagina. */
 .btn-primary {
   display: inline-flex; align-items: center; gap: 0.5rem;
   padding: 0.85rem 2rem;
@@ -256,9 +244,7 @@ body::after {
   background: rgba(255,255,255,0.08);
 }
 
-/* ══════════════════════════════════════
-   INICIO — HERO
-══════════════════════════════════════ */
+/* No entiendo a que se refiere con hero.*/
 #page-inicio { display: none; flex-direction: column; min-height: calc(100vh - 64px); }
 #page-inicio.active { display: flex; }
 
@@ -321,7 +307,7 @@ body::after {
 .hero-highlight .section-label { margin-bottom: 0.35rem; display: inline-block; }
 .hero-highlight p { margin: 0; font-size: 0.95rem; line-height: 1.7; color: var(--gris-texto); }
 
-/* Noticias / Facebook */
+/* Mejorar interfaz, mostrarlo de manera horizontal. */
 .noticias-carrusel { display: flex; flex-direction: column; gap: 0.5rem; padding: 0 0.1rem; }
 .noticias-header { text-align: center; }
 .noticias-header h2 {
@@ -338,7 +324,7 @@ body::after {
   background: #ffffff; box-shadow: 0 10px 24px rgba(0,0,0,0.18);
 }
 
-/* Tabla adicciones */
+/* Actualizar el tablero segun lo mas reciente. */
 .inicio-tables { text-align: center; margin: 0 auto; max-width: 800px; padding: 15px; }
 .inicio-tables h3 {
   font-family: var(--font-cond); font-size: 1.2rem;
@@ -354,7 +340,7 @@ body::after {
 .sem-table p { margin: 0 0 15px 0; line-height: 1.5; }
 .sem-table p:last-child { margin-bottom: 0; }
 
-/* Card info CBTIS */
+
 .inicio-info-card {
   max-width: 1100px; margin: 0 auto 1.2rem; padding: 1rem;
   border-radius: 18px; background: rgba(10,5,8,0.78);
@@ -377,7 +363,6 @@ body::after {
 .inicio-info-scroll ul { margin: 0.2rem 0 0.6rem 1.1rem; padding: 0; }
 .inicio-info-scroll li { margin-bottom: 0.15rem; }
 
-/* Stats bar */
 .hero-stats {
   display: grid; grid-template-columns: repeat(4, 1fr);
   border-top: 1px solid var(--border);
@@ -389,9 +374,7 @@ body::after {
 .hstat-num { display: block; font-family: var(--font-cond); font-size: 2.5rem; font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 0.3rem; }
 .hstat-label { display: block; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
 
-/* ══════════════════════════════════════
-   NOSOTROS
-══════════════════════════════════════ */
+
 .nos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 3rem; }
 .nos-card {
   background: var(--card-bg); backdrop-filter: blur(6px);
@@ -417,9 +400,7 @@ body::after {
 .value-chip h4 { font-family: var(--font-cond); font-size: 1rem; font-weight: 700; text-transform: uppercase; color: var(--blanco); margin-bottom: 0.5rem; }
 .value-chip p { font-size: 0.82rem; font-weight: 300; color: var(--gris-texto); line-height: 1.7; opacity: 0.85; }
 
-/* ══════════════════════════════════════
-   HISTORIA
-══════════════════════════════════════ */
+
 .timeline { position: relative; padding-left: 10px; max-width: 800px; }
 .tl-rail { position: absolute; left: 108px; top: 4px; bottom: 0; width: 2px; background: linear-gradient(var(--vino) 0%, rgba(123,26,52,0) 100%); }
 .tl-item { display: grid; grid-template-columns: 90px 40px 1fr; gap: 0 1.5rem; margin-bottom: 3rem; align-items: start; }
@@ -429,9 +410,6 @@ body::after {
 .tl-body h3 { font-family: var(--font-cond); font-size: 1.15rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--blanco); margin-bottom: 0.5rem; }
 .tl-body p { font-size: 0.88rem; font-weight: 300; color: var(--gris-texto); line-height: 1.8; opacity: 0.9; }
 
-/* ══════════════════════════════════════
-   ESPECIALIDADES
-══════════════════════════════════════ */
 .esp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1.25rem; }
 .esp-card {
   background: var(--card-bg); backdrop-filter: blur(6px);
@@ -458,9 +436,7 @@ body::after {
 .esp-card:hover .esp-btn-ver,
 .esp-card.active .esp-btn-ver { opacity: 1; transform: translateY(0); }
 
-/* ══════════════════════════════════════
-   ACADÉMICO
-══════════════════════════════════════ */
+
 .academico-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2.5rem; }
 .info-block { background: var(--card-bg); backdrop-filter: blur(6px); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; }
 .info-block h3 { font-family: var(--font-cond); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--blanco); margin-bottom: 1rem; }
@@ -469,7 +445,7 @@ body::after {
 
 .sem-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 2.5rem; backdrop-filter: blur(6px); }
 
-/* Carrusel académico */
+
 .css-carousel { position: relative; max-width: 100%; margin: 0 auto; overflow: hidden; }
 .css-carousel input[type="radio"] { display: none; }
 .slides-container { display: flex; width: 300%; transition: transform 0.5s ease-in-out; }
@@ -500,9 +476,7 @@ body:has(#slide-3:checked) .btn-form { color: #bfa15f; border-bottom: 3px solid 
 .tit-card h4 { font-family: var(--font-cond); font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--blanco); margin-bottom: 0.6rem; }
 .tit-card p { font-size: 0.82rem; font-weight: 300; color: var(--gris-texto); line-height: 1.7; opacity: 0.9; }
 
-/* ══════════════════════════════════════
-   NOTICIAS
-══════════════════════════════════════ */
+
 .noticias-layout { display: grid; grid-template-columns: 3fr 2fr; gap: 1.5rem; margin-bottom: 2.5rem; }
 .noticia-featured { background: var(--card-bg); backdrop-filter: blur(6px); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.3s; }
 .noticia-featured:hover { border-color: var(--vino); }
@@ -525,9 +499,7 @@ body:has(#slide-3:checked) .btn-form { color: #bfa15f; border-bottom: 3px solid 
 .logro-card p { font-size: 0.84rem; font-weight: 400; color: var(--gris-texto); line-height: 1.6; }
 .logro-card small { display: block; margin-top: 0.3rem; font-size: 0.7rem; font-weight: 300; color: rgba(255,255,255,0.3); }
 
-/* ══════════════════════════════════════
-   GALERÍA
-══════════════════════════════════════ */
+
 .galeria-masonry { columns: 3; gap: 1rem; }
 .gal-item { break-inside: avoid; margin-bottom: 1rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; position: relative; transition: border-color 0.3s; background: var(--card-bg); backdrop-filter: blur(6px); }
 .gal-item:hover { border-color: var(--vino); }
@@ -547,9 +519,7 @@ body:has(#slide-3:checked) .btn-form { color: #bfa15f; border-bottom: 3px solid 
 .gc7 { background: rgba(26,13,13,0.9); }
 .gc8 { background: rgba(20,20,32,0.9); }
 
-/* ══════════════════════════════════════
-   CONTACTO
-══════════════════════════════════════ */
+
 .contacto-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; }
 .contact-info h3 { font-family: var(--font-cond); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--blanco); margin-bottom: 1.75rem; }
 .c-list { list-style: none; display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2rem; }
@@ -576,15 +546,11 @@ body:has(#slide-3:checked) .btn-form { color: #bfa15f; border-bottom: 3px solid 
 .fg select option { background: #1a0810; }
 .fg textarea { height: 100px; }
 
-/* ══════════════════════════════════════
-   TOAST
-══════════════════════════════════════ */
+/* JAHSJ q es esto*/
 #toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 9000; background: var(--vino); color: #fff; padding: 0.85rem 1.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 500; opacity: 0; transform: translateY(8px); transition: opacity 0.3s, transform 0.3s; pointer-events: none; }
 #toast.show { opacity: 1; transform: translateY(0); }
 
-/* ══════════════════════════════════════
-   FOOTER
-══════════════════════════════════════ */
+
 .site-footer { background-color: #000000; color: #ffffff; padding: 15px 20px; font-family: sans-serif; font-size: 0.78rem; }
 .footer-container { max-width: 1050px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-bottom: 10px; }
 .footer-column h3 { font-size: 0.85rem; margin-top: 0; margin-bottom: 8px; border-bottom: 2px solid #ffffff; padding-bottom: 3px; display: inline-block; }
@@ -600,16 +566,12 @@ body:has(#slide-3:checked) .btn-form { color: #bfa15f; border-bottom: 3px solid 
 .footer-bottom a { color: #bfa15f; text-decoration: none; font-weight: bold; }
 .footer-bottom a:hover { text-decoration: underline; }
 
-/* ══════════════════════════════════════
-   ANIMACIONES REVEAL
-══════════════════════════════════════ */
+/* Quizas sea mejor implementar las animaciones con JS*/
 .nos-card, .value-chip, .esp-card, .tit-card, .logro-card, .gal-item, .tl-item, .info-block {
   transition-property: opacity, transform, border-color;
 }
 
-/* ══════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════ */
+
 @media (max-width: 960px) {
   #hamburger { display: flex; }
   .nav-links {
@@ -643,9 +605,7 @@ body:has(#slide-3:checked) .btn-form { color: #bfa15f; border-bottom: 3px solid 
   .footer-container { grid-template-columns: 1fr; }
 }
 
-/* ══════════════════════════════════════
-   PRINT
-══════════════════════════════════════ */
+
 @media print {
   #loader, #navbar, .hero-ctas, .facebook-feed-wrap, .site-footer { display: none !important; }
   body::before, body::after { display: none; }
